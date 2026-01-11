@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "../../dist/apps/api-seed"
+  },
+  "include": ["src/seed.ts", "src/app/**/*.ts"],
+  "exclude": ["**/*.spec.ts"]
+}

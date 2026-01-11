@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (for production)
+  postgres:
+    image: postgres:15-alpine
+    container_name: task-management-db
+    environment:
+      POSTGRES_DB: task_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - task-management-network
+
+  # Backend API
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: task-management-api
+    environment:
+      - NODE_ENV=production
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=task_management
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=1h
+      - API_PORT=3000
+      - CORS_ORIGIN=http://localhost:4200
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - task-management-network
+
+  # Frontend Dashboard (Nginx)
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    container_name: task-management-dashboard
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - task-management-network
+
+volumes:
+  postgres_data:
+
+networks:
+  task-management-network:
+    driver: bridge

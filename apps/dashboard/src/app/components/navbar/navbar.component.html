@@ -1,0 +1,52 @@
+<nav class="bg-white shadow-md">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center gap-6">
+        <h1 class="text-xl font-bold text-blue-600">Task Manager</h1>
+        
+        <div *ngIf="user$ | async as user" class="flex items-center gap-4">
+          <a 
+            routerLink="/dashboard" 
+            routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+            class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+          >
+            Dashboard
+          </a>
+          <a 
+            *ngIf="user.role === 'OWNER'"
+            routerLink="/users" 
+            routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+            class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+          >
+            Users
+          </a>
+          <a 
+            *ngIf="user.role === 'OWNER' || user.role === 'ADMIN'"
+            routerLink="/audit-logs" 
+            routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+            class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+          >
+            Audit Logs
+          </a>
+        </div>
+      </div>
+
+      <div *ngIf="user$ | async as user" class="flex items-center gap-4">
+        <div class="text-sm text-right">
+          <div class="font-medium text-gray-800">{{ user.name }}</div>
+          <div class="text-gray-500 text-xs">{{ user.role }}</div>
+          <div *ngIf="(user.role === 'ADMIN' || user.role === 'VIEWER') && user.organizationName" 
+               class="text-blue-600 text-xs font-medium mt-1">
+            📍 {{ user.organizationName }}
+          </div>
+        </div>
+        <button
+          (click)="logout()"
+          class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
